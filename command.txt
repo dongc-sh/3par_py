@@ -1,0 +1,3 @@
+showsys
+showversion
+shownode
