@@ -18,18 +18,16 @@ device_info.txt           #List the 3par storage IP,username,password
 
 3, python healthcheck.py. Will get the overall capacity information of the storage
 
-
-...
 Mgmt IP:10.x.x.x
 version:3.2.2.709
 hostname: storagename
 model:HP_3PAR 7400
 SN:1626754
-###
+
 SSD Total Capacity:0.0 GB
 SSD Free Capacity:0.0 GB
 FC Total Capacity:39312.0 GB
 FC Free Capacity:13859.0 GB
 NL Total Capacity:120318.0 GB
 NL Free Capacity:41482.0 GB
-#############################
+
