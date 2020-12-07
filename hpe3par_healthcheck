@@ -7,10 +7,10 @@ starttime = time.strftime('%Y-%m-%d %T')
 start_info = "Starting at "+str(starttime)
 print(start_info)
 
-cmd_filepath = r"C:\\users\c64146\PycharmProjects\HP3par\command.txt"
+cmd_filepath = r"C:\\users\xxx\HP3par\command.txt"
 cmd_file = open(cmd_filepath, "r")
 cmds = cmd_file.readlines()
-dev_filepath = r"C:\\users\c64146\PycharmProjects\HP3par\device_info.txt"
+dev_filepath = r"C:\\users\xxx\HP3par\device_info.txt"
 dev_file = open(dev_filepath, "r")
 
 while 1: 
@@ -36,7 +36,7 @@ while 1:
            command.send(cmd+'\n')
        time.sleep(10)
        output = command.recv(65535).decode()
-       log = open(r"C:\\Users\c64146\Desktop\3parlog\\"+ip+".txt",'a')
+       log = open(r"C:\\Users\xxx\3parlog\\"+ip+".txt",'a')
        endtime = time.strftime('%Y-%m-%d %T')
        end_info = "Completed at "+str(endtime)
        log.write(start_info+'\n\n'+output+'\n\n'+end_info)
