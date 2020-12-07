@@ -42,13 +42,12 @@ class HPE3parcollection:
         print('NL Total Capacity:%s GB' % NLtotal)
         print('NL Free Capacity:%s GB' % NLFree)
         print('#############################')
-        print('#############################')
         self.connection.logout()
 
 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-dev_filepath = r"C:\\users\c64146\PycharmProjects\HP3par\device_info.txt"
+dev_filepath = r"C:\\users\xxx\HP3par\device_info.txt"
 dev_file = open(dev_filepath, "r")
 
 
