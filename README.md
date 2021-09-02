@@ -16,18 +16,8 @@ device_info.txt           #List the 3par storage IP,username,password
 
 2, Customize the file path in the script
 
-3, python healthcheck.py. Will get the overall capacity information of the storage
+3, python 3par_CollectionToExcel.py, get the overall capacity information of the storage, export to the Excel table.
 
-Mgmt IP:10.x.x.x
-version:3.2.2.709
-hostname: storagename
-model:HP_3PAR 7400
-SN:1626754
+<img width="914" alt="微信图片_20210902153420" src="https://user-images.githubusercontent.com/65651866/131802109-891a5c7f-5f30-4953-9938-a6634e2a9742.png">
 
-SSD Total Capacity:0.0 GB
-SSD Free Capacity:0.0 GB
-FC Total Capacity:39312.0 GB
-FC Free Capacity:13859.0 GB
-NL Total Capacity:120318.0 GB
-NL Free Capacity:41482.0 GB
 
