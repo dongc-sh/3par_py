@@ -1,83 +1,73 @@
-#import pprint
-import time
 import urllib3
-import xlsxwriter
 from hpe3parclient import client
-
-class HPE3parcollection:
-    row = 1
-
-    def __init__(self, hpe3parip, username, password, workbook, worksheet):
-        self.connection = client.HPE3ParClient('https://%s:8080/api/v1' % hpe3parip)
-        self.connection.setSSHOptions(ip=hpe3parip, login=username, password=password)
-        self.connection.login(username, password)
+import pandas as pd
+from openpyxl import load_workbook
 
 
+def Connect3par(hpe3parip, username, password):
+    cl = client.HPE3ParClient('https://%s:8080/api/v1' % hpe3parip)
+    cl.setSSHOptions(ip=hpe3parip, login=username, password=password)
+    cl.login(username, password)
+    return cl
 
-    def getsysteminfo(self):
-        global storagename,systemVersion,Serialnumber,MgmtIP,storagemodel
+def GetSysteminfo(cl, *systeminfo):
+    systeminfo = cl.getStorageSystemInfo()
+    systemVersion.append(systeminfo['systemVersion'])
+    storagename.append(systeminfo['name'])
+    storagemodel.append(systeminfo['model'])
+    Serialnumber.append(systeminfo['serialNumber'])
+    MgmtIP.append(hpe3parip)
+    return systeminfo
 
-        systeminfo = self.connection.getStorageSystemInfo()
-        systemVersion = systeminfo['systemVersion']
-        storagename = systeminfo['name']
-        storagemodel = systeminfo['model']
-        Serialnumber = systeminfo['serialNumber']
-        MgmtIP = hpe3parip
-        self.connection.logout()
-
-
-    def getcapactiy(self):
-        global SSDtotal,SSDFree,FCtotal,FCFree,NLtotal,NLFree
-        capacity = self.connection.getOverallSystemCapacity()
-        SSDtotal = int(capacity['SSDCapacity']['totalMiB'])/1024
-        SSDFree = int(capacity['SSDCapacity']['freeMiB'])/1024
-        FCtotal = int(capacity['FCCapacity']['totalMiB']) / 1024
-        FCFree = int(capacity['FCCapacity']['freeMiB']) / 1024
-        NLtotal = int(capacity['NLCapacity']['totalMiB']) / 1024
-        NLFree = int(capacity['NLCapacity']['freeMiB']) / 1024
-        self.connection.logout()
-
-
-    def write_excel(self):
-        global storagename,storagemodel,systemVersion,Serialnumber,MgmtIP,SSDtotal,SSDFree,FCtotal,FCFree,NLtotal,NLFree
-        datainsert=[storagename,storagemodel,systemVersion,Serialnumber,MgmtIP,SSDtotal,SSDFree,FCtotal,FCFree,NLtotal,NLFree]
-        worksheet.write_row(HPE3parcollection.row, 0, datainsert)
-        HPE3parcollection.row += 1
+def GetCapactiy(cl, *param):
+    capacity = cl.getOverallSystemCapacity()
+    SSDtotal.append(int(capacity['SSDCapacity']['totalMiB'])/1024)
+    SSDFree.append(int(capacity['SSDCapacity']['freeMiB'])/1024)
+    FCtotal.append(int(capacity['FCCapacity']['totalMiB']) / 1024)
+    FCFree.append(int(capacity['FCCapacity']['freeMiB']) / 1024)
+    NLtotal.append(int(capacity['NLCapacity']['totalMiB']) / 1024)
+    NLFree.append(int(capacity['NLCapacity']['freeMiB']) / 1024)
+    return param
 
 
+def ExcelMod(workbook_path):
+    workbook = load_workbook(path)
+    worksheet = workbook[workbook.sheetnames[0]]
+    for i in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']:
+        worksheet.column_dimensions[i].width = 13
+    workbook.save(workbook_path)
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-dev_filepath = r"C:\\users\c64146\PycharmProjects\HP3par\device_info.txt"
-dev_file = open(dev_filepath, "r")
+if __name__ == '__main__':
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    dev_filepath = r"C:\\users\c64146\PycharmProjects\HP3par\device_info.txt"
+    dev_file = open(dev_filepath, "r")
+    systemVersion,storagename,storagemodel,Serialnumber,MgmtIP = [[] for x in range(5)]
+    SSDtotal,SSDFree,FCtotal,FCFree,NLtotal,NLFree = [[] for x in range(6)]                      #定义空数组，用于存放收集的数据
 
 
-workbook = xlsxwriter.Workbook("chart_3par.xlsx")
-worksheet = workbook.add_worksheet('sheet1')
-worksheet.set_column(0, 100, 13)
-headings = ['hostname','Model','Version','SN','Mgmt IP','SSD total(GB)','SSD free(GB)','FC total(GB)','FC free(GB)','NL total(GB)','NL free(GB)']
-bold = workbook.add_format({'bold': 1,'fg_color': '#D7E4BC', 'color': 'Black'})
-worksheet.write_row(0, 0, headings, bold)
+    while 1:
+        dev_info = dev_file.readline()
+        if not dev_info:
+            break
+        else:
+            devs = dev_info.split(',')
+            hpe3parip = devs[0]
+            username = devs[1]
+            password = devs[2].strip()
+            password = password.strip('\n')
 
+            conn = Connect3par(hpe3parip, username, password)
+            GetSysteminfo(conn,systemVersion,storagename,storagemodel,Serialnumber,MgmtIP)
+            GetCapactiy(conn,SSDtotal,SSDFree,FCtotal,FCFree,NLtotal,NLFree)
 
+            conn.logout()
 
-while 1:
-    dev_info = dev_file.readline()
-    if not dev_info:
-        break
-    else:
-        devs = dev_info.split(',')
-        hpe3parip = devs[0]
-        username = devs[1]
-        password = devs[2].strip()
-        password = password.strip('\n')
-        result = HPE3parcollection(hpe3parip, username, password, workbook, worksheet)
-        result.getsysteminfo()
-        result.getcapactiy()
-        result.write_excel()
-        print("collection completed at %s" %hpe3parip)
-        time.sleep(1)
+    df_systeminfo = pd.DataFrame({'HostName':storagename,'Model':storagemodel,'Version':systemVersion,'SN':Serialnumber,'Mgmt IP':MgmtIP})
+    df_capacity = pd.DataFrame({'SSD total(GB)':SSDtotal,'SSD free(GB)':SSDFree,'FC total(GB)':FCtotal,'FC free(GB)':FCFree,'NL total(GB)':NLtotal,'NL free(GB)':NLFree})
+    output = pd.concat([df_systeminfo, df_capacity], axis=1)
+    output.to_excel('output.xlsx', index=False, sheet_name="storageinfo")
+    path = 'output.xlsx'
+    ExcelMod(path)
 
-workbook.close()
-dev_file.close()
-
+    dev_file.close()
 
