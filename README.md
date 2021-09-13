@@ -18,6 +18,7 @@ device_info.txt           #List the 3par storage IP,username,password
 
 3, python 3par_CollectionToExcel.py, get the overall capacity information of the storage, export to the Excel table.
 
-<img width="914" alt="微信图片_20210902153420" src="https://user-images.githubusercontent.com/65651866/131802109-891a5c7f-5f30-4953-9938-a6634e2a9742.png">
+![a](https://user-images.githubusercontent.com/65651866/133044040-46a016dd-f393-4259-859e-97100925f81f.png)
+
 
 
