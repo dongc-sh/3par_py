@@ -34,7 +34,7 @@ def ExcelMod(workbook_path):
     workbook = load_workbook(path)
     worksheet = workbook[workbook.sheetnames[0]]
     for i in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']:
-        worksheet.column_dimensions[i].width = 13
+        worksheet.column_dimensions[i].width = 13                                        #修改excel表格列宽
     workbook.save(workbook_path)
 
 if __name__ == '__main__':
@@ -64,10 +64,10 @@ if __name__ == '__main__':
 
     df_systeminfo = pd.DataFrame({'HostName':storagename,'Model':storagemodel,'Version':systemVersion,'SN':Serialnumber,'Mgmt IP':MgmtIP})
     df_capacity = pd.DataFrame({'SSD total(GB)':SSDtotal,'SSD free(GB)':SSDFree,'FC total(GB)':FCtotal,'FC free(GB)':FCFree,'NL total(GB)':NLtotal,'NL free(GB)':NLFree})
-    output = pd.concat([df_systeminfo, df_capacity], axis=1)
-    output.to_excel('output.xlsx', index=False, sheet_name="storageinfo")
+    output = pd.concat([df_systeminfo, df_capacity], axis=1)                 #合并两个dataframe
+    output.to_excel('output.xlsx', index=False, sheet_name="storageinfo")    #将合并后的df导出至excel表格
     path = 'output.xlsx'
-    ExcelMod(path)
+    ExcelMod(path)                                                      #修改excel表格列宽
 
     dev_file.close()
 
