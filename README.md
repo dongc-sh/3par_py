@@ -12,7 +12,7 @@ device_info.txt           #List the 3par storage IP,username,password
 # capacity collection user guide
 collect 3par system information and capacity with HPE3parclient SDK
 1, the collection script will work with device_info.txt.
-device_info.txt           #List the 3par storage IP,username,password
+device_info.txt           
 
 2, Customize the file path in the script
 
